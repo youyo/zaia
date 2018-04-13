@@ -1,0 +1,7 @@
+.circleci/
+.envrc
+.gitignore
+pkg/
+vendor/
+cache.db
+zabbix-aws-integration-agent
