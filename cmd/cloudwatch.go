@@ -86,9 +86,9 @@ func extractValues(resp *cloudwatch.GetMetricStatisticsOutput, statistics string
 }
 
 func cloudWatchGetMetrics(args []string) (value string, err error) {
-	dimensionName := args[0]
-	dimensionValue := args[1]
-	namespace := args[2]
+	namespace := args[0]
+	dimensionName := args[1]
+	dimensionValue := args[2]
 	metricName := args[3]
 	statistics := args[4]
 	arn := args[5]
