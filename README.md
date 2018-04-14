@@ -41,6 +41,18 @@ Trust Relationship policy.
 
 ## Usage
 
+### Start process
+
+zabbix-aws-integration-agent is running in docker container.
+
+```
+$ docker container run -d -p 10050:10050 -e AWS_ACCESS_KEY_ID=your_aws_access_key -e AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key --restart always --name zabbix-aws-integration-agent youyo/zabbix-aws-integration-agent:latest
+```
+
+### Request method
+
+Request method is zabbix protocol.
+
 - Discovery of running EC2 instances.
 
 Syntax
