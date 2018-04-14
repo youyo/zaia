@@ -43,7 +43,8 @@ Trust Relationship policy.
 
 ### Start process
 
-zabbix-aws-integration-agent is running in docker container.
+zabbix-aws-integration-agent is running in docker container.  
+https://hub.docker.com/r/youyo/zabbix-aws-integration-agent/
 
 ```
 $ docker container run -d -p 10050:10050 -e AWS_ACCESS_KEY_ID=your_aws_access_key -e AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key --restart always --name zabbix-aws-integration-agent youyo/zabbix-aws-integration-agent:latest
