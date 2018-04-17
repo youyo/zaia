@@ -37,6 +37,10 @@ func runZabbixAgent(listenIp string) error {
 			args := extractFromArgs([]byte(key))
 			data, err := cloudWatchGetMetrics(args)
 			return data, err
+		case itemKeyIs(`aws-integration.rds.discovery\[.*\]`, key):
+			args := extractFromArgs([]byte(key))
+			data, err := rdsDiscovery(args)
+			return data, err
 		case itemKeyIs(`agent.ping`, key):
 			return "1", nil
 		default:
