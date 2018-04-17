@@ -109,3 +109,27 @@ Example
 $ zabbix_get -s 127.0.0.1 -k aws-integration.cloudwatch.get-metrics[AWS/EC2,InstanceId,i-0000xxxx,CPUUtilization,Average,arn:aws:iam::00000000:role/rolename,ap-northeast-1]
 7.696
 ```
+
+- Discovery of RDS instances.
+
+Syntax
+
+```
+$ zabbix_get -s zabbix-aws-integration-agent-host -k aws-integration.rds.discovery[Zabbix-host-group,ARN,Region]
+```
+
+Example
+
+```
+$ zabbix_get -s 127.0.0.1 -k aws-integration.rds.discovery[zabbix-host-group,arn:aws:iam::00000000:role/rolename,ap-northeast-1]
+{
+  "data": [
+    {
+      "{#DB_INSTANCE_ARN}": "arn:aws:rds:ap-northeast-1:00000000:db:identifier",
+      "{#DB_INSTANCE_IDENTIFIER}": "identifier",
+      "{#ENGINE}": "aurora-mysql",
+      "{#ZABBIX_HOST_GROUP}": "zabbix-host-group"
+    }
+  ]
+}
+```
