@@ -1,4 +1,4 @@
-package cmd
+package cache
 
 import (
 	"database/sql"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	_ "github.com/mattn/go-sqlite3"
+	zaia_crypt "github.com/youyo/zaia/crypt"
 )
 
 const (
@@ -28,7 +29,7 @@ func connectDatabase() *sql.DB {
 	return db
 }
 
-func initializeCacheDb() {
+func InitializeCacheDb() {
 	flushDatabase()
 	db := connectDatabase()
 	defer db.Close()
@@ -45,7 +46,7 @@ func initializeCacheDb() {
 	}
 }
 
-func readCredentialsFromCache(arn string) (credValues credentials.Value, err error) {
+func ReadCredentialsFromCache(arn string) (credValues credentials.Value, err error) {
 	db := connectDatabase()
 	defer db.Close()
 
@@ -67,11 +68,11 @@ func readCredentialsFromCache(arn string) (credValues credentials.Value, err err
 		return
 	}
 
-	credValues, err = decode(encodedCredValues)
+	credValues, err = zaia_crypt.Decode(encodedCredValues)
 	return
 }
 
-func writeCredentialsToCache(arn string, encodedCredValues []byte) error {
+func WriteCredentialsToCache(arn string, encodedCredValues []byte) error {
 	db, err := sql.Open("sqlite3", "cache.db")
 	if err != nil {
 		return err
@@ -95,4 +96,8 @@ func writeCredentialsToCache(arn string, encodedCredValues []byte) error {
 	}
 	tx.Commit()
 	return nil
+}
+
+func isExpired(t time.Time) bool {
+	return t.Before(time.Now())
 }

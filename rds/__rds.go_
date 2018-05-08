@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go/service/rds"
+	"github.com/youyo/zaia/zaia"
 )
 
 // discovery
@@ -60,6 +61,6 @@ func rdsDiscovery(args []string) (data string, err error) {
 	if err != nil {
 		return
 	}
-	data, err = jsonize(rdsDiscoveryData)
+	data, err = zaia.Jsonize(rdsDiscoveryData)
 	return
 }

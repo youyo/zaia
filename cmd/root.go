@@ -9,6 +9,9 @@ import (
 
 	"github.com/fujiwara/go-zabbix-get/zabbix"
 	"github.com/spf13/cobra"
+	zaia_cache "github.com/youyo/zaia/cache"
+	zaia_cloudwatch "github.com/youyo/zaia/cloudwatch"
+	zaia_ec2 "github.com/youyo/zaia/ec2"
 )
 
 var RootCmd = &cobra.Command{
@@ -27,19 +30,15 @@ func runZabbixAgent(listenIp string) error {
 		switch {
 		case itemKeyIs(`aws-integration.ec2.discovery\[.*\]`, key):
 			args := extractFromArgs([]byte(key))
-			data, err := ec2Discovery(args)
+			data, err := zaia_ec2.Discovery(args)
 			return data, err
 		case itemKeyIs(`aws-integration.ec2.maintenance\[.*\]`, key):
 			args := extractFromArgs([]byte(key))
-			data, err := ec2Maintenance(args)
+			data, err := zaia_ec2.Maintenance(args)
 			return data, err
 		case itemKeyIs(`aws-integration.cloudwatch.get-metrics\[.*\]`, key):
 			args := extractFromArgs([]byte(key))
-			data, err := cloudWatchGetMetrics(args)
-			return data, err
-		case itemKeyIs(`aws-integration.rds.discovery\[.*\]`, key):
-			args := extractFromArgs([]byte(key))
-			data, err := rdsDiscovery(args)
+			data, err := zaia_cloudwatch.GetMetrics(args)
 			return data, err
 		case itemKeyIs(`agent.ping`, key):
 			return "1", nil
@@ -69,7 +68,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	initializeCacheDb()
+	zaia_cache.InitializeCacheDb()
 }
 
 func initConfig() {}
