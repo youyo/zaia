@@ -2,4 +2,4 @@
 vendor/
 pkg/
 cache.db
-zabbix-aws-integration-agent
+zaia

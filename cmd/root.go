@@ -14,15 +14,20 @@ import (
 	zaia_ec2 "github.com/youyo/zaia/ec2"
 )
 
-var RootCmd = &cobra.Command{
-	Use:     "zabbix-aws-integration-agent",
-	Version: version,
-	Short:   "zabbix-aws-integration-agent",
-	//Long: ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		err := runZabbixAgent("0.0.0.0:10050")
-		log.Fatal(err)
-	},
+func RootCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "zaia",
+		Version: version,
+		Short:   "zaia",
+		//Long: ``,
+		Run: func(cmd *cobra.Command, args []string) {
+			err := runZabbixAgent("0.0.0.0:10050")
+			log.Fatal(err)
+		},
+	}
+	cobra.OnInitialize(initConfig)
+	zaia_cache.InitializeCacheDb()
+	return cmd
 }
 
 func runZabbixAgent(listenIp string) error {
@@ -60,15 +65,15 @@ func extractFromArgs(b []byte) []string {
 }
 
 func Execute() {
-	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
+	cmd := RootCmd()
+	cmd.SetOutput(os.Stdout)
+	if err := cmd.Execute(); err != nil {
+		cmd.SetOutput(os.Stderr)
+		cmd.Println(err)
 		os.Exit(1)
 	}
 }
 
-func init() {
-	cobra.OnInitialize(initConfig)
-	zaia_cache.InitializeCacheDb()
-}
+func init() {}
 
 func initConfig() {}

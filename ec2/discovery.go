@@ -2,11 +2,11 @@ package ec2
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	zaia_auth "github.com/youyo/zaia/auth"
-	"github.com/youyo/zaia/zaia"
 )
 
 type (
@@ -76,6 +76,15 @@ func buildDiscoveryData(resp *ec2.DescribeInstancesOutput, zabbixHostGroup strin
 	return
 }
 
+func jsonize(data interface{}) (s string, err error) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		return
+	}
+	s = string(b)
+	return
+}
+
 func Discovery(args []string) (data string, err error) {
 	zabbixHostGroup := args[0]
 	arn := args[1]
@@ -90,6 +99,6 @@ func Discovery(args []string) (data string, err error) {
 	if err != nil {
 		return
 	}
-	data, err = zaia.Jsonize(ec2DiscoveryData)
+	data, err = jsonize(ec2DiscoveryData)
 	return
 }
