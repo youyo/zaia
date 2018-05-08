@@ -6,7 +6,7 @@ devel-deps:
 
 ## Build container test image
 build-container-test-image:
-	docker image build -t youyo/zabbix-aws-integration-agent:test .
+	docker image build -t youyo/zaia:test .
 
 ## Show help
 help:
