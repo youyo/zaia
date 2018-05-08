@@ -1,4 +1,4 @@
-package cmd
+package cloudwatch
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
+	zaia_auth "github.com/youyo/zaia/auth"
 )
 
 type (
@@ -22,7 +23,7 @@ type (
 )
 
 func buildRequestParams(dimensionName, dimensionValue, namespace, metricName string) (params *cloudwatch.GetMetricStatisticsInput, err error) {
-	endTime, err := time.Parse(TimeLayout, time.Now().UTC().Format(TimeLayout))
+	endTime, err := time.Parse(config.TimeLayout, time.Now().UTC().Format(config.TimeLayout))
 	if err != nil {
 		return
 	}
@@ -53,7 +54,7 @@ func buildRequestParams(dimensionName, dimensionValue, namespace, metricName str
 func fetchCloudWatchMetrics(cloudWatchService *cloudwatch.CloudWatch, params *cloudwatch.GetMetricStatisticsInput) (resp *cloudwatch.GetMetricStatisticsOutput, err error) {
 	ctx, cancelFn := context.WithTimeout(
 		context.Background(),
-		RequestTimeout,
+		config.RequestTimeout,
 	)
 	defer cancelFn()
 	resp, err = cloudWatchService.GetMetricStatisticsWithContext(ctx, params)
@@ -85,7 +86,7 @@ func extractValues(resp *cloudwatch.GetMetricStatisticsOutput, statistics string
 	return
 }
 
-func cloudWatchGetMetrics(args []string) (value string, err error) {
+func GetMetrics(args []string) (value string, err error) {
 	namespace := args[0]
 	dimensionName := args[1]
 	dimensionValue := args[2]
@@ -94,7 +95,7 @@ func cloudWatchGetMetrics(args []string) (value string, err error) {
 	arn := args[5]
 	region := args[6]
 
-	sess, config := Auth(arn, region)
+	sess, config := zaia_auth.Auth(arn, region)
 	cloudWatchService := cloudwatch.New(sess, config)
 	params, err := buildRequestParams(
 		dimensionName,

@@ -20,7 +20,7 @@
 
 package main
 
-import "github.com/youyo/zabbix-aws-integration-agent/cmd"
+import "github.com/youyo/zaia/cmd"
 
 func main() {
 	cmd.Execute()
