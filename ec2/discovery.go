@@ -95,10 +95,10 @@ func Discovery(args []string) (data string, err error) {
 	if err != nil {
 		return
 	}
-	ec2DiscoveryData, err := buildDiscoveryData(resp, zabbixHostGroup)
+	discoveryData, err := buildDiscoveryData(resp, zabbixHostGroup)
 	if err != nil {
 		return
 	}
-	data, err = jsonize(ec2DiscoveryData)
+	data, err = jsonize(discoveryData)
 	return
 }

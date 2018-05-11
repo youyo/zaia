@@ -72,8 +72,6 @@ $ zabbix_get -s 127.0.0.1 -k aws-integration.ec2.discovery[zabbix-host-group,arn
       "{#INSTANCE_ID}": "i-0000xxxx",
       "{#INSTANCE_NAME}": "Name tag of the instance",
       "{#INSTANCE_ROLE}": "Role tag of the instance",
-      "{#INSTANCE_PUBLIC_IP}": "public ip",
-      "{#INSTANCE_PRIVATE_IP}": "private ip",
       "{#ZABBIX_HOST_GROUP}": "zabbix-host-group"
     }
   ]
@@ -95,6 +93,82 @@ $ zabbix_get -s 127.0.0.1 -k aws-integration.ec2.maintenance[i-0000xxxx,No maint
 No maintenance
 ```
 
+- Discovery of RDS instances.
+
+Syntax
+
+```
+$ zabbix_get -s zabbix-aws-integration-agent-host -k aws-integration.rds.instance.discovery[Zabbix-host-group,ARN,Region]
+```
+
+Example
+
+```
+$ zabbix_get -s 127.0.0.1 -k aws-integration.rds.instance.discovery[zabbix-host-group,arn:aws:iam::00000000:role/rolename,ap-northeast-1]
+{
+  "data": [
+    {
+      "{#DB_INSTANCE_IDENTIFIER}": "identifier",
+      "{#ENGINE}": "aurora-mysql",
+      "{#ZABBIX_HOST_GROUP}": "zabbix-host-group"
+    }
+  ]
+}
+```
+
+- Whether the rds instance has maintenance
+
+Syntax
+
+```
+$ zabbix_get -s zabbix-aws-integration-agent-host -k aws-integration.rds.instance.maintenance[db-instance-identifier,No maintenance message,ARN,Region]
+```
+
+Example
+
+```
+$ zabbix_get -s 127.0.0.1 -k aws-integration.rds.instance.maintenance[db-instance-identifier,No maintenance,arn:aws:iam::00000000:role/rolename,ap-northeast-1]
+No maintenance
+```
+
+- Discovery of RDS clusters
+
+Syntax
+
+```
+$ zabbix_get -s zabbix-aws-integration-agent-host -k aws-integration.rds.cluster.discovery[Zabbix-host-group,ARN,Region]
+```
+
+Example
+
+```
+$ zabbix_get -s 127.0.0.1 -k aws-integration.rds.cluster.discovery[zabbix-host-group,arn:aws:iam::00000000:role/rolename,ap-northeast-1]
+{
+  "data": [
+    {
+      "{#DB_CLUSTER_IDENTIFIER}": "identifier",
+      "{#ENGINE}": "aurora-mysql",
+      "{#ZABBIX_HOST_GROUP}": "zabbix-host-group"
+    }
+  ]
+}
+```
+
+- Whether the rds cluster has maintenance
+
+Syntax
+
+```
+$ zabbix_get -s zabbix-aws-integration-agent-host -k aws-integration.rds.cluster.maintenance[db-cluster-identifier,No maintenance message,ARN,Region]
+```
+
+Example
+
+```
+$ zabbix_get -s 127.0.0.1 -k aws-integration.rds.cluster.maintenance[db-cluster-identifier,No maintenance,arn:aws:iam::00000000:role/rolename,ap-northeast-1]
+No maintenance
+```
+
 - Fetch CloudWatch data
 
 Syntax
@@ -108,28 +182,4 @@ Example
 ```
 $ zabbix_get -s 127.0.0.1 -k aws-integration.cloudwatch.get-metrics[AWS/EC2,InstanceId,i-0000xxxx,CPUUtilization,Average,arn:aws:iam::00000000:role/rolename,ap-northeast-1]
 7.696
-```
-
-- Discovery of RDS instances.
-
-Syntax
-
-```
-$ zabbix_get -s zabbix-aws-integration-agent-host -k aws-integration.rds.discovery[Zabbix-host-group,ARN,Region]
-```
-
-Example
-
-```
-$ zabbix_get -s 127.0.0.1 -k aws-integration.rds.discovery[zabbix-host-group,arn:aws:iam::00000000:role/rolename,ap-northeast-1]
-{
-  "data": [
-    {
-      "{#DB_INSTANCE_ARN}": "arn:aws:rds:ap-northeast-1:00000000:db:identifier",
-      "{#DB_INSTANCE_IDENTIFIER}": "identifier",
-      "{#ENGINE}": "aurora-mysql",
-      "{#ZABBIX_HOST_GROUP}": "zabbix-host-group"
-    }
-  ]
-}
 ```

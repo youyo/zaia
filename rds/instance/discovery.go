@@ -1,24 +1,22 @@
-package cmd
+package rds_instance
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/aws/aws-sdk-go/service/rds"
-	"github.com/youyo/zaia/zaia"
+	zaia_auth "github.com/youyo/zaia/auth"
 )
 
-// discovery
-
 type (
-	RdsDiscoveryItem struct {
-		DBInstanceArn        string `json:"{#DB_INSTANCE_ARN}"`
+	DiscoveryItem struct {
 		DBInstanceIdentifier string `json:"{#DB_INSTANCE_IDENTIFIER}"`
 		Engine               string `json:"{#ENGINE}"`
 		ZabbixHostGroup      string `json:"{#ZABBIX_HOST_GROUP}"`
 	}
-	RdsDiscoveryItems []RdsDiscoveryItem
-	RdsDiscoveryData  struct {
-		Data RdsDiscoveryItems `json:"data"`
+	DiscoveryItems []DiscoveryItem
+	DiscoveryData  struct {
+		Data DiscoveryItems `json:"data"`
 	}
 )
 
@@ -26,41 +24,49 @@ func fetchRunningDBInstances(rdsService *rds.RDS) (resp *rds.DescribeDBInstances
 	params := &rds.DescribeDBInstancesInput{}
 	ctx, cancelFn := context.WithTimeout(
 		context.Background(),
-		RequestTimeout,
+		config.RequestTimeout,
 	)
 	defer cancelFn()
 	resp, err = rdsService.DescribeDBInstancesWithContext(ctx, params)
 	return
 }
 
-func buildRdsDiscoveryData(resp *rds.DescribeDBInstancesOutput, zabbixHostGroup string) (rdsDiscoveryData RdsDiscoveryData, err error) {
-	var rdsDiscoveryItems RdsDiscoveryItems
+func buildDiscoveryData(resp *rds.DescribeDBInstancesOutput, zabbixHostGroup string) (rdsDiscoveryData DiscoveryData, err error) {
+	var rdsDiscoveryItems DiscoveryItems
 	for _, v := range resp.DBInstances {
-		rdsDiscoveryItems = append(rdsDiscoveryItems, RdsDiscoveryItem{
-			DBInstanceArn:        *v.DBInstanceArn,
+		rdsDiscoveryItems = append(rdsDiscoveryItems, DiscoveryItem{
 			DBInstanceIdentifier: *v.DBInstanceIdentifier,
 			Engine:               *v.Engine,
 			ZabbixHostGroup:      zabbixHostGroup,
 		})
 	}
-	rdsDiscoveryData = RdsDiscoveryData{rdsDiscoveryItems}
+	rdsDiscoveryData = DiscoveryData{rdsDiscoveryItems}
 	return
 }
 
-func rdsDiscovery(args []string) (data string, err error) {
+func jsonize(data interface{}) (s string, err error) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		return
+	}
+	s = string(b)
+	return
+}
+
+func Discovery(args []string) (data string, err error) {
 	zabbixHostGroup := args[0]
 	arn := args[1]
 	region := args[2]
-	sess, config := Auth(arn, region)
+	sess, config := zaia_auth.Auth(arn, region)
 	rdsService := rds.New(sess, config)
 	resp, err := fetchRunningDBInstances(rdsService)
 	if err != nil {
 		return
 	}
-	rdsDiscoveryData, err := buildRdsDiscoveryData(resp, zabbixHostGroup)
+	discoveryData, err := buildDiscoveryData(resp, zabbixHostGroup)
 	if err != nil {
 		return
 	}
-	data, err = zaia.Jsonize(rdsDiscoveryData)
+	data, err = jsonize(discoveryData)
 	return
 }

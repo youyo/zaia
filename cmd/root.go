@@ -12,6 +12,8 @@ import (
 	zaia_cache "github.com/youyo/zaia/cache"
 	zaia_cloudwatch "github.com/youyo/zaia/cloudwatch"
 	zaia_ec2 "github.com/youyo/zaia/ec2"
+	zaia_rds_cluster "github.com/youyo/zaia/rds/cluster"
+	zaia_rds_instance "github.com/youyo/zaia/rds/instance"
 )
 
 func RootCmd() *cobra.Command {
@@ -33,6 +35,12 @@ func RootCmd() *cobra.Command {
 func runZabbixAgent(listenIp string) error {
 	return zabbix.RunAgent(listenIp, func(key string) (string, error) {
 		switch {
+		case itemKeyIs(`agent.ping`, key):
+			return "1", nil
+		case itemKeyIs(`aws-integration.cloudwatch.get-metrics\[.*\]`, key):
+			args := extractFromArgs([]byte(key))
+			data, err := zaia_cloudwatch.GetMetrics(args)
+			return data, err
 		case itemKeyIs(`aws-integration.ec2.discovery\[.*\]`, key):
 			args := extractFromArgs([]byte(key))
 			data, err := zaia_ec2.Discovery(args)
@@ -41,12 +49,22 @@ func runZabbixAgent(listenIp string) error {
 			args := extractFromArgs([]byte(key))
 			data, err := zaia_ec2.Maintenance(args)
 			return data, err
-		case itemKeyIs(`aws-integration.cloudwatch.get-metrics\[.*\]`, key):
+		case itemKeyIs(`aws-integration.rds.instance.discovery\[.*\]`, key):
 			args := extractFromArgs([]byte(key))
-			data, err := zaia_cloudwatch.GetMetrics(args)
+			data, err := zaia_rds_instance.Discovery(args)
 			return data, err
-		case itemKeyIs(`agent.ping`, key):
-			return "1", nil
+		case itemKeyIs(`aws-integration.rds.instance.maintenance\[.*\]`, key):
+			args := extractFromArgs([]byte(key))
+			data, err := zaia_rds_instance.Maintenance(args)
+			return data, err
+		case itemKeyIs(`aws-integration.rds.cluster.discovery\[.*\]`, key):
+			args := extractFromArgs([]byte(key))
+			data, err := zaia_rds_cluster.Discovery(args)
+			return data, err
+		case itemKeyIs(`aws-integration.rds.cluster.maintenance\[.*\]`, key):
+			args := extractFromArgs([]byte(key))
+			data, err := zaia_rds_cluster.Maintenance(args)
+			return data, err
 		default:
 			return "", fmt.Errorf("not supported")
 		}
