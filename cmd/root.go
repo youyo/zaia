@@ -18,10 +18,8 @@ import (
 
 func RootCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "zaia",
-		Version: version,
-		Short:   "zaia",
-		//Long: ``,
+		Use:   "zaia",
+		Short: "zaia",
 		Run: func(cmd *cobra.Command, args []string) {
 			err := runZabbixAgent("0.0.0.0:10050")
 			log.Fatal(err)
