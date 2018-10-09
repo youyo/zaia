@@ -29,6 +29,10 @@ func fetchRunningInstances(ec2Service *ec2.EC2) (resp *ec2.DescribeInstancesOutp
 				Name:   aws.String("instance-state-name"),
 				Values: []*string{aws.String("running")},
 			},
+			{
+				Name:   aws.String("tag:monitoring"),
+				Values: []*string{aws.String("true")},
+			},
 		},
 	}
 	ctx, cancelFn := context.WithTimeout(
