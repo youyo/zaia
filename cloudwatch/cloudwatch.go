@@ -28,26 +28,44 @@ func buildRequestParams(dimensionName, dimensionValue, namespace, metricName str
 		return
 	}
 	startTime := endTime.Add(-600 * time.Second)
-	params = &cloudwatch.GetMetricStatisticsInput{
-		Dimensions: []*cloudwatch.Dimension{
-			{
-				Name:  aws.String(dimensionName),
-				Value: aws.String(dimensionValue),
+	params = func() *cloudwatch.GetMetricStatisticsInput {
+		if namespace == "AWS/SES" {
+			return &cloudwatch.GetMetricStatisticsInput{
+				Namespace:  aws.String(namespace),
+				MetricName: aws.String(metricName),
+				Period:     aws.Int64(60),
+				EndTime:    &endTime,
+				StartTime:  &startTime,
+				Statistics: []*string{
+					aws.String("Minimum"),
+					aws.String("Maximum"),
+					aws.String("Average"),
+					aws.String("SampleCount"),
+					aws.String("Sum"),
+				},
+			}
+		}
+		return &cloudwatch.GetMetricStatisticsInput{
+			Dimensions: []*cloudwatch.Dimension{
+				{
+					Name:  aws.String(dimensionName),
+					Value: aws.String(dimensionValue),
+				},
 			},
-		},
-		Namespace:  aws.String(namespace),
-		MetricName: aws.String(metricName),
-		Period:     aws.Int64(60),
-		EndTime:    &endTime,
-		StartTime:  &startTime,
-		Statistics: []*string{
-			aws.String("Minimum"),
-			aws.String("Maximum"),
-			aws.String("Average"),
-			aws.String("SampleCount"),
-			aws.String("Sum"),
-		},
-	}
+			Namespace:  aws.String(namespace),
+			MetricName: aws.String(metricName),
+			Period:     aws.Int64(60),
+			EndTime:    &endTime,
+			StartTime:  &startTime,
+			Statistics: []*string{
+				aws.String("Minimum"),
+				aws.String("Maximum"),
+				aws.String("Average"),
+				aws.String("SampleCount"),
+				aws.String("Sum"),
+			},
+		}
+	}()
 	return
 }
 
