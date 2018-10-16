@@ -14,6 +14,7 @@ import (
 	zaia_ec2 "github.com/youyo/zaia/ec2"
 	zaia_rds_cluster "github.com/youyo/zaia/rds/cluster"
 	zaia_rds_instance "github.com/youyo/zaia/rds/instance"
+	zaia_ses_account "github.com/youyo/zaia/ses/account"
 )
 
 func RootCmd() *cobra.Command {
@@ -62,6 +63,10 @@ func runZabbixAgent(listenIp string) error {
 		case itemKeyIs(`aws-integration.rds.cluster.maintenance\[.*\]`, key):
 			args := extractFromArgs([]byte(key))
 			data, err := zaia_rds_cluster.Maintenance(args)
+			return data, err
+		case itemKeyIs(`aws-integration.ses.account.discovery\[.*\]`, key):
+			args := extractFromArgs([]byte(key))
+			data, err := zaia_ses_account.Discovery(args)
 			return data, err
 		default:
 			return "", fmt.Errorf("not supported")
