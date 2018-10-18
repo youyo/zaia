@@ -20,7 +20,7 @@ func buildDiscoveryData(zabbixHostGroup, region string) (discoveryData Discovery
 	if region == "us-east-1" || region == "us-west-2" || region == "eu-west-1" {
 		discoveryItems = append(discoveryItems, DiscoveryItem{
 			ZabbixHostId:    zabbixHostGroup + "-" + region,
-			ZabbixHostGroup: zabbixHostGroup,
+			ZabbixHostGroup: zabbixHostGroup + "-" + region,
 		})
 	}
 	discoveryData = DiscoveryData{discoveryItems}
