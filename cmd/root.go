@@ -68,6 +68,10 @@ func runZabbixAgent(listenIp string) error {
 			args := extractFromArgs([]byte(key))
 			data, err := zaia_ses_account.Discovery(args)
 			return data, err
+		case itemKeyIs(`aws-integration.ses.account.get-send-quota\[.*\]`, key):
+			args := extractFromArgs([]byte(key))
+			data, err := zaia_ses_account.GetSendQuota(args)
+			return data, err
 		default:
 			return "", fmt.Errorf("not supported")
 		}
