@@ -23,13 +23,15 @@ func fetchInstanceStatus(ec2Service *ec2.EC2, ec2InstanceID string) (resp *ec2.D
 
 func buildMaintenanceMessage(resp *ec2.DescribeInstanceStatusOutput, noMaintenanceMessage string) (message string) {
 	message = noMaintenanceMessage
-	if len(resp.InstanceStatuses[0].Events) > 0 {
-		message = fmt.Sprintf("Code: %s, Description: %s, NotAfter: %s, NotBefore: %s",
-			*resp.InstanceStatuses[0].Events[0].Code,
-			*resp.InstanceStatuses[0].Events[0].Description,
-			*resp.InstanceStatuses[0].Events[0].NotAfter,
-			*resp.InstanceStatuses[0].Events[0].NotBefore,
-		)
+	if len(resp.InstanceStatuses) > 0 {
+		if len(resp.InstanceStatuses[0].Events) > 0 {
+			message = fmt.Sprintf("Code: %s, Description: %s, NotAfter: %s, NotBefore: %s",
+				*resp.InstanceStatuses[0].Events[0].Code,
+				*resp.InstanceStatuses[0].Events[0].Description,
+				*resp.InstanceStatuses[0].Events[0].NotAfter,
+				*resp.InstanceStatuses[0].Events[0].NotBefore,
+			)
+		}
 	}
 	return
 }
