@@ -13,8 +13,9 @@ FROM alpine:latest
 LABEL maintainer "youyo <1003ni2@gmail.com>"
 
 ENV DIR /go/src/github.com/youyo/zaia
+ENV PORT 10050
 WORKDIR /app
 COPY --from=build-env ${DIR}/zaia /app/zaia
 RUN apk add --update --no-cache ca-certificates
-EXPOSE 10050/TCP
+EXPOSE ${PORT}/TCP
 ENTRYPOINT ["/app/zaia"]
