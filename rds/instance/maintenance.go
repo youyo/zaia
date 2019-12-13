@@ -28,12 +28,11 @@ func buildMaintenanceMessage(resp *rds.DescribePendingMaintenanceActionsOutput, 
 	message = noMaintenanceMessage
 	if len(resp.PendingMaintenanceActions) > 0 {
 		action := resp.PendingMaintenanceActions[0].PendingMaintenanceActionDetails[0]
-		message = fmt.Sprintf("Action: %s, Description: %s, AutoAppliedAfterDate: %s, CurrentApplyDate: %s, ForcedApplyDate: %s",
+		message = fmt.Sprintf("Action: %s, Description: %s, AutoAppliedAfterDate: %s, CurrentApplyDate: %s",
 			*action.Action,
 			*action.Description,
 			*action.AutoAppliedAfterDate,
 			*action.CurrentApplyDate,
-			*action.ForcedApplyDate,
 		)
 	}
 	return
