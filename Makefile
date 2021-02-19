@@ -1,8 +1,8 @@
 .DEFAULT_GOAL := help
 
 ## Setup
-devel-deps:
-	go get -u -v github.com/golang/dep/cmd/dep
+download-libs:
+	go mod download
 
 ## Build container test image
 build-container-test-image:

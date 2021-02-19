@@ -5,8 +5,7 @@ ENV DIR /go/src/github.com/youyo/zaia
 WORKDIR ${DIR}
 ADD . ${DIR}
 RUN apk add --update make git gcc musl-dev
-RUN make devel-deps
-RUN dep ensure -v
+RUN make download-libs
 RUN go build -v
 
 FROM alpine:latest
