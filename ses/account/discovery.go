@@ -18,7 +18,7 @@ type (
 func buildDiscoveryData(zabbixHostGroup, region string) (discoveryData DiscoveryData) {
 	var discoveryItems DiscoveryItems
 
-	regions := [18]string{
+	regions := [...]string{
 		"us-east-1",
 		"us-west-2",
 		"eu-west-1",
